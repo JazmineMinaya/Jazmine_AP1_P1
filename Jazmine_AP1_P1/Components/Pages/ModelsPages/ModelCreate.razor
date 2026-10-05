@@ -56,7 +56,7 @@
 				@* footer *@
 				<div class="card-footer">
 					<a href="/Autores/Index" class="btn btn-secondary"> Volver</a>
-					<button type="button" class="" @onclick="Guardar"> Guardar</button>
+					<button type="button" @onclick="Guardar"> Guardar</button>
 				</div>
 			</div>
 		</div>
@@ -65,6 +65,11 @@
 
 @code {
 	public Autores Autor { get; set; } = new Autores();
+
+	protected override void OnInitializedAsync()
+	{
+		Autor.FechaNacimiento = DateTime.Today;
+	}
 
 	private async Task Guardar()
 	{
