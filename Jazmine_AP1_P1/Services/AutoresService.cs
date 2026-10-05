@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace Jazmine_AP1_P1.Services;
 
-public class ModelsService(
+public class AutoresService(
     IDbContextFactory<Contexto> contextFactory
 ) : Aplicada1.Core.IService<Autores, int>
 {
