@@ -7,5 +7,5 @@ public class Contexto : DbContext
 {
     public Contexto(DbContextOptions<Contexto> options) : base(options) { }
 
-    public virtual DbSet<Model> Models { get; set; }
+    public virtual DbSet<Autores> Models { get; set; }
 }
