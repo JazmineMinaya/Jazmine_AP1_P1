@@ -8,39 +8,60 @@ namespace Jazmine_AP1_P1.Services;
 
 public class ModelsService(
     IDbContextFactory<Contexto> contextFactory
-) : Aplicada1.Core.IService<Model, int>
+) : Aplicada1.Core.IService<Autores, int>
 {
-    public async Task<bool> Guardar(Model model)
+    public async Task<bool> Guardar(Autores autor)
     {
-        throw new NotImplementedException();
-    }
-    private async Task<bool> Existe(int modelId)
-    {
-        throw new NotImplementedException();
-    }
-
-    private async Task<bool> Insertar(Model mode1)
-    {
-        throw new NotImplementedException();
+        if (!await Existe(autor.IdAutor))
+        {
+            return await Insertar(autor);
+        }
+        else
+        {
+            return await Modificar(autor);
+        }
     }
 
-    private async Task<bool> Modificar(Model model)
+    private async Task<bool> Existe(int idAutor)
     {
-        throw new NotImplementedException();
+        await using var contexto = await contextFactory.CreateDbContextAsync();
+        return await contexto.Autores.AnyAsync(a => a.IdAutor == idAutor);
     }
 
-    public async Task<Model?> Buscar(int modelId)
+    private async Task<bool> Insertar(Autores autor)
     {
-        throw new NotImplementedException();
+        await using var contexto = await contextFactory.CreateDbContextAsync();
+        contexto.Autores.Add(autor);
+        return await contexto.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> Eliminar(int modelId)
+    private async Task<bool> Modificar(Autores autor)
     {
-        throw new NotImplementedException();
+        await using var contexto = await contextFactory.CreateDbContextAsync();
+        contexto.Update(autor);
+        return await contexto.SaveChangesAsync() > 0;
     }
 
-    public async Task<List<Model>> GetList(Expression<Func<Model, bool>> criterio)
+    public async Task<Autores?> Buscar(int idAutor)
     {
-        throw new NotImplementedException();
+        await using var contexto = await contextFactory.CreateDbContextAsync();
+        return await contexto.Autores.FirstOrDefaultAsync(a => a.IdAutor == idAutor);
+    }
+
+    public async Task<bool> Eliminar(int idAutor)
+    {
+        await using var contexto = await contextFactory.CreateDbContextAsync();
+        return await contexto.Autores
+            .Where(a => a.IdAutor == idAutor)
+            .ExecuteDeleteAsync() > 0;
+    }
+
+    public async Task<List<Autores>> GetList(Expression<Func<Autores, bool>> criterio)
+    {
+        await using var contexto = await contextFactory.CreateDbContextAsync();
+        return await contexto.Autores
+            .Where(criterio)
+            .AsNoTracking()
+            .ToListAsync();
     }
 }
