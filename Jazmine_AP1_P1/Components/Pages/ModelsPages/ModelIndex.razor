@@ -1,0 +1,75 @@
+﻿@page "/Models/Index"
+@rendermode InteractiveServer
+
+@inject ModelsService modelsService
+@inject ToastService toastService
+
+<PageTitle>Index</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+
+        @*  Encabezado *@
+        <div class="card-header d-flex justify-content-between align-content-center mb-4">
+            <h5 class="card-title">Registro de Model</h5>
+            <a href ="/Models/Create" class="btn btn-primary"><span class="bi bi-plus-square mt-3"></span> Crear</a>
+        </div>
+
+        <div class="card-body">
+
+            @* Filtros *@
+            <div class="row align-items-end">
+
+                @* Filtrar por *@
+                <div class="col-3">
+                    <InputSelect class="form-select" @bind-Value="Filtro">
+                        <option value="" selected disabled>Elija una opción</option>
+                        <option value="filtro1">Filtro1</option>
+                        <option value="filtro2">Filtro2</option>
+                    </InputSelect>
+                </div>
+
+                @* Búsqueda *@
+                <div class="col-4">
+                    <div class="input-group">
+                        <input class="form-control" @bind="ValorFiltro" placeholder="Buscar" />
+                        <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                    </div>
+                </div>
+
+                @* QuickGrid *@
+
+            </div>
+        </div>
+ 
+        @* footer *@
+    
+    </div>
+ </div>
+
+@* Modal para eliminar *@
+
+@code {
+    public string Filtro { get; set; } = string.Empty;
+    public string ValorFiltro { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    private async Task Buscar()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void MostrarModal(Model model)
+    {
+        throw new NotImplementedException();
+    }
+
+    private async Task ConfirmarEliminar()
+    {
+        throw new NotImplementedException();
+    }
+  }

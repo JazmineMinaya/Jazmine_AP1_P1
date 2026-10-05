@@ -1,10 +1,20 @@
 using Jazmine_AP1_P1.Components;
+using Jazmine_AP1_P1.Context;
+using Microsoft.EntityFrameworkCore;
+using Jazmine_AP1_P1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
+
+builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
+builder.Services.AddScoped<ModelsService>();
+
+builder.Services.AddBlazorBootstrap();
 
 var app = builder.Build();
 
