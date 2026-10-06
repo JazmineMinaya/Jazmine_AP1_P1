@@ -1,7 +1,7 @@
 ﻿@page "/Autores/Index"
 @rendermode InteractiveServer
 
-@inject ModelsService modelsService
+@inject AutoresService autoresService
 @inject ToastService toastService
 
 <PageTitle>Index</PageTitle>
@@ -24,8 +24,8 @@
                 <div class="col-3">
                     <InputSelect class="form-select" @bind-Value="Filtro">
                         <option value="" selected disabled>Elija una opción</option>
-                        <option value="filtro1">Filtro1</option>
-                        <option value="filtro2">Filtro2</option>
+                        <option value="Nombres">Nombres</option>
+                        <option value="Nacionalidad">Nacionalidad</option>
                     </InputSelect>
                 </div>
 
@@ -38,38 +38,113 @@
                 </div>
 
                 @* QuickGrid *@
+                <QuickGrid Items="ListaAutores.AsQueryable()" Class="table table-hover mt-3">
+                    <PropertyColumn Property="a => a.IdAutor" Title="IdAutor" Sortable="true" />
+                    <PropertyColumn Property="a => a.Nombres" Title="Nombres" Sortable="true" />
+                    <PropertyColumn Property="a => a.Nacionalidad" Title="Nacionalidad" Sortable="true" />
+                    <PropertyColumn Property="a => a.FechaNacimiento" Title="FechaNacimiento" Sortable="true" />
+                    <PropertyColumn Property="a => a.Sueldo" Title="Sueldo" Sortable="true" />
+                    <TemplateColumn Title="Opciones">
+                         <a href="/Autores/Edit/@context.IdAutor" class="btn btn-outline-primary bi bi-pencil-square"></a>
+                         <button type="button" class="btn btn-outline-di-trash" data-bs-toggle="modal" data-bs-target="#modalEliminar" @onclick="() => MostrarModal(context)"></button>
+                     </TemplateColumn>
+                </QuickGrid>
 
             </div>
         </div>
  
         @* footer *@
-    
+        <div class="card-footer">
+             <label class="me-5"><strong>Cantidad: </strong>@ListaAutores.Count(a => a.IdAutor)</label>
+             <label><strong>Total: </strong>$@SueldoTotal.ToString("N2")</label>
+         </div>
+
+        @* Modal para eliminar *@
+         <div class="modal fade" id="modalEliminar" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmar Eliminación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss></button>
+                    </div>
+
+                    <div class="modal-body">
+                        @if (AutorAEliminar != null)
+                        {
+                            <p>¿Desea eliminar al autor?</p>
+                        }
+                    </div>
+
+                    <div class="footer">
+                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Cancelar</button>
+                       <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="ConfirmarEliminar"> Eliminar</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </div>
  </div>
 
-@* Modal para eliminar *@
-
 @code {
+    public List<Autores> ListaAutores { get; set; } = new List<Autores>();
     public string Filtro { get; set; } = string.Empty;
     public string ValorFiltro { get; set; } = string.Empty;
+    public Autores AutorAEliminar { get; set; }
+
+    private double SueldoTotal
+    {
+        get
+        {
+            if (ListaAutores.Count == 0)
+                return 0;
+
+            return ListaAutores.Sum(a => a.Sueldo);
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        throw new NotImplementedException();
+        ListaAutores = await autoresService.GetList(e => e.IdAutor > 0);
     }
 
     private async Task Buscar()
     {
-        throw new NotImplementedException();
+        if (ValorFiltro.Trim() == "")
+            return;
+
+        if (Filtro == "Nombres")
+        {
+            ListaAutores = await autoresService.GetList(e => e.Nombres.ToLower().Contains(ValorFiltro.ToLower()));
+        }
+        else if (Filtro == "Nacionalidad")
+        {
+            ListaAutores = await autoresService.GetList(e => e.Nacionalidad.ToLower().Contains(ValorFiltro.ToLower()));
+        }
     }
 
-    private void MostrarModal(Model model)
+    private void MostrarModal(Autores autor)
     {
-        throw new NotImplementedException();
+        AutorAEliminar = autor;
     }
 
     private async Task ConfirmarEliminar()
     {
-        throw new NotImplementedException();
+        if (AutorAEliminar == null)
+            return;
+
+        var eliminado = await autoresService.Eliminar(AutorAEliminar.IdAutor);
+
+        if (eliminado)
+        {
+            toastService.ShowSuccess("Autor eliminado correctamente");
+            ListaAutores = await autoresService.GetList(e => e.IdAutor > 0);
+        }
+        else
+        {
+            toastService.ShowError("No se ha podido eliminar el autor");
+        }
     }
   }

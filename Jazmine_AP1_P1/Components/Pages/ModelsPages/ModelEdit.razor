@@ -1,7 +1,7 @@
 ﻿@page "/Autores/Edit/{IdAutor:int}"
 @rendermode InteractiveServer
 
-@inject ModelsService model1Service
+@inject AutoresService autoresService
 @inject NavigationManager navigationManager
 @inject ToastService toastService
 
@@ -56,7 +56,7 @@
 				@* footer *@
 				<div class="card-footer">
 					<a href="/Autores/Index" class="btn btn-secondary"> Volver</a>
-					<button type="button" @onclick="Modificar"> Guardar</button>
+					<button type="button" class="btn btn-secondary" @onclick="Modificar"> Modificar</button>
 				</div>
 			</div>
 		</div>
