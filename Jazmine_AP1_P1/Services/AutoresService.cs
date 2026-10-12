@@ -28,6 +28,15 @@ public class AutoresService(
         return await contexto.Autores.AnyAsync(a => a.IdAutor == idAutor);
     }
 
+    public async Task<bool> ExisteNombre(string nombres, int idAutor)
+    {
+        await using var contexto = await contextFactory.CreateDbContextAsync();
+
+        return await contexto.Autores.AnyAsync(a =>
+            a.Nombres.ToLower() == nombres.Trim().ToLower()
+            && a.IdAutor != idAutor);
+    }
+
     private async Task<bool> Insertar(Autores autor)
     {
         await using var contexto = await contextFactory.CreateDbContextAsync();

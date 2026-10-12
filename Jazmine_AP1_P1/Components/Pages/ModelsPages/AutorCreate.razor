@@ -13,7 +13,7 @@
 	<div class="container">
 		<div class="card shadow-lg">
 
-			<div class="card-header d-flex justify-content-between align-content-center mb-4">
+			<div class="card-header text-center">
 				<h5 class="card-title">Crear Autor</h5>
 			</div>
 
@@ -42,7 +42,7 @@
 				@* FechaNacimiento *@
 				<div class="mb-3">
 					<label class="form-label"><strong>FechaNacimiento</strong></label>
-					<InputDate class="form-control" @bind-Value="Autor.FechaNacimiento"></InputDate>
+					<InputDate class="form-control" @bind-Value="Autor.FechaNacimiento" max="@DateTime.Today.ToString("yyyy-MM-dd")"></InputDate>
 					<ValidationMessage For="(() => Autor.FechaNacimiento)" />
 				</div>
 
@@ -53,12 +53,14 @@
 					<ValidationMessage For="(() => Autor.Sueldo)" />
 				</div>
 
-				@* footer *@
-				<div class="card-footer text-center mt-2">
-					<a href="/Autores/Index" class="btn btn-secondary"><span class="bi bi-arrow-left"></span> Volver</a>
-					<button class="btn btn-primary bi bi-floppy"> Guardar</button>
-				</div>
 			</div>
+
+			@* footer *@
+			<div class="card-footer text-center mt-2">
+				<a href="/Autores/Index" class="btn btn-secondary"><span class="bi bi-arrow-left"></span> Volver</a>
+				<button class="btn btn-primary bi bi-floppy"> Guardar</button>
+			</div>
+
 		</div>
 	</div>
 </EditForm>
@@ -73,6 +75,18 @@
 
 	private async Task Guardar()
 	{
+		if (Autor.FechaNacimiento.Date > DateTime.Today)
+		{
+			toastService.ShowError("La fecha de nacimiento no puede superar la fecha actual");
+			return;
+		}
+
+		if (await autoresService.ExisteNombre(Autor.Nombres, Autor.IdAutor))
+		{
+			toastService.ShowError("Ya existe un autor con ese nombre");
+			return;
+		}
+
 		var guardado = await autoresService.Guardar(Autor);
 
 		if (guardado)
